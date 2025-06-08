@@ -1,0 +1,173 @@
+﻿<!-- Crypto analytics page -->
+
+<div class="col-md-8 w-100">
+    <!-- Section: Market overview for top cryptocurrencies -->
+    <div class="card mb-3 w-100">
+        <h5 class="card-header"><strong>POPULAR CRYPTOCURRENCIES (BY MARKET CAP)</strong></h5>
+        <ul class="list-group list-group-flush">
+
+            <!-- Bitcoin -->
+            <li class="list-group-item">
+                <b>1. Bitcoin (BTC)</b> – $@ViewBag.BitcoinPrice
+                <span class="@GetChangeColorClass(ViewBag.BitcoinChange1h)">
+                    1h %: @GetFormattedPercentage(ViewBag.BitcoinChange1h) <i class="bi @GetChangeColorClass(ViewBag.BitcoinChange1h)"></i>
+                </span>,
+                <span class="@GetChangeColorClass(ViewBag.BitcoinChange24h)">
+                    24h %: @GetFormattedPercentage(ViewBag.BitcoinChange24h) <i class="bi @GetChangeColorClass(ViewBag.BitcoinChange24h)"></i>
+                </span>,
+                <span class="@GetChangeColorClass(ViewBag.BitcoinChange7d)">
+                    7d %: @GetFormattedPercentage(ViewBag.BitcoinChange7d) <i class="bi @GetChangeColorClass(ViewBag.BitcoinChange7d)"></i>
+                </span>
+                <button class="btn text-dark border-2 border-dark" onclick="showChart('bitcoin')"> <i class="bi bi-bar-chart-steps"></i> SHOW PRICE CHART</button>
+            </li>
+
+			<!-- Ethereum -->
+            <li class="list-group-item">
+                <b>2. Ethereum (ETH)</b> – $@ViewBag.EthereumPrice
+                <span class="@GetChangeColorClass(ViewBag.EthereumChange1h)">
+                    1h %: @GetFormattedPercentage(ViewBag.EthereumChange1h) <i class="bi @GetChangeColorClass(ViewBag.EthereumChange1h)"></i>
+                </span>,
+                <span class="@GetChangeColorClass(ViewBag.EthereumChange24h)">
+                    24h %: @GetFormattedPercentage(ViewBag.EthereumChange24h) <i class="bi @GetChangeColorClass(ViewBag.EthereumChange24h)"></i>
+                </span>,
+                <span class="@GetChangeColorClass(ViewBag.EthereumChange7d)">
+                    7d %: @GetFormattedPercentage(ViewBag.EthereumChange7d) <i class="bi @GetChangeColorClass(ViewBag.EthereumChange7d)"></i>
+                </span>
+                <button class="btn text-dark border-2 border-dark" onclick="showChart('ethereum')"> <i class="bi bi-bar-chart-steps"></i> SHOW PRICE CHART</button>
+            </li>
+
+			<!-- Tether -->
+            <li class="list-group-item">
+                <b>3. Tether (USDT)</b> – $@ViewBag.TetherPrice
+                <span class="@GetChangeColorClass(ViewBag.TetherChange1h)">
+                    1h %: @GetFormattedPercentage(ViewBag.TetherChange1h) <i class="bi @GetChangeColorClass(ViewBag.TetherChange1h)"></i>
+                </span>,
+                <span class="@GetChangeColorClass(ViewBag.TetherChange24h)">
+                    24h %: @GetFormattedPercentage(ViewBag.TetherChange24h) <i class="bi @GetChangeColorClass(ViewBag.TetherChange24h)"></i>
+                </span>,
+                <span class="@GetChangeColorClass(ViewBag.TetherChange7d)">
+                    7d %: @GetFormattedPercentage(ViewBag.TetherChange7d) <i class="bi @GetChangeColorClass(ViewBag.TetherChange7d)"></i>
+                </span>
+                <button class="btn text-dark border-2 border-dark" onclick="showChart('tether')"> <i class="bi bi-bar-chart-steps"></i> SHOW PRICE CHART</button>
+            </li>
+        </ul>
+    </div>
+
+    @functions {
+        // Sets color and icon based on % change
+        string GetChangeColorClass(dynamic change)
+        {
+            if (change == null) return "text-muted";
+
+            decimal changeValue = Convert.ToDecimal(change);
+            string colorClass = changeValue >= 0 ? "text-success" : "text-danger";
+            string iconClass = changeValue >= 0 ? "bi-arrow-up" : "bi-arrow-down";
+
+            return $"{colorClass} {iconClass}";
+        }
+
+        // Formats % change value
+        string GetFormattedPercentage(dynamic change)
+        {
+            if (change == null) return "0.00";
+            return $"{Convert.ToDecimal(change):0.00}%";
+        }
+    }
+
+    <!-- Section: Price chart -->
+    <div class="card mb-3 w-100">
+        <h5 class="card-header"><strong>PRICE CHART: <span id="chartTitle">Bitcoin (BTC)</span></strong></h5>
+        <div class="card-body">
+            <!-- Canvas -->
+            <canvas id="priceChart" height="200"></canvas>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Include Chart.js library from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        let priceChart = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            showChart('bitcoin');
+        });
+
+        // Function to update chart based on selected cryptocurrency
+        function showChart(cryptoId) {
+            const titles = {
+                'bitcoin': 'Bitcoin (BTC)',
+                'ethereum': 'Ethereum (ETH)',
+                'tether': 'Tether (USDT)'
+            };
+
+            // Update chart title text
+            document.getElementById('chartTitle').textContent = titles[cryptoId];
+
+            // Fetch historical price data for the selected crypto
+            fetch(`/Analytics/GetHistoricalData?id=${cryptoId}`)
+                .then(response => response.json())
+                .then(data => {
+                    renderChart(data.prices, data.dates, titles[cryptoId]);
+                })
+                .catch(error => {
+                    console.error('Error fetching chart data:', error);
+                });
+        }
+
+        // Function to render the chart using Chart.js
+        function renderChart(prices, dates, title) {
+            const ctx = document.getElementById('priceChart').getContext('2d');
+
+            if (priceChart) {
+                priceChart.destroy();
+            }
+
+            // Create new line chart with the provided price and date data
+            priceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: `${title} Price (USD)`,
+                        data: prices,
+                        borderColor: 'rgb(0, 0, 0)',
+                        tension: 0.1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${title}: $${context.parsed.y.toFixed(2)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+}

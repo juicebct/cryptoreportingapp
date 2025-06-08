@@ -1,0 +1,42 @@
+[
+  {
+    "Type": 0,
+    "CryptoName": "BTC",
+    "Date": "2025-05-02T00:00:00",
+    "Quantity": 2.0,
+    "PricePerUnit": 2.0,
+    "Total": 4.00
+  },
+  {
+    "Type": 0,
+    "CryptoName": "BTC",
+    "Date": "2025-05-31T00:00:00",
+    "Quantity": 10.0,
+    "PricePerUnit": 10.0,
+    "Total": 100.00
+  },
+  {
+    "Type": 0,
+    "CryptoName": "USDT",
+    "Date": "2025-05-17T00:00:00",
+    "Quantity": 10.0,
+    "PricePerUnit": 10.0,
+    "Total": 100.00
+  },
+  {
+    "Type": 0,
+    "CryptoName": "USDT",
+    "Date": "2025-05-31T00:00:00",
+    "Quantity": 10.0,
+    "PricePerUnit": 10.0,
+    "Total": 100.00
+  },
+  {
+    "Type": 0,
+    "CryptoName": "BNB",
+    "Date": "2018-02-28T00:00:00",
+    "Quantity": 10.0,
+    "PricePerUnit": 12.0,
+    "Total": 120.00
+  }
+]
