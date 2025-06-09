@@ -1,3 +1,5 @@
+![logo](https://github.com/user-attachments/assets/df882c14-0213-47bc-b51e-dedcd29e203c)
+
 ## 🚀 Overview
 **Crypto Reporting Application** is a web-application designed to help individuals and small companies manage and track their cryptocurrency portfolios. It allows users to record, analyze, and visualize their crypto transactions using modern and user-friendly tools. The project was created as part of a course project (Individual Project N2)
 
@@ -23,10 +25,10 @@
 - **Development:**  
 
   - Frontend:
-    Built with HTML, CSS, JavaScript, and Bootstrap for responsiveness.
+    Built with HTML, CSS, JavaScript, and Bootstrap.
 
   - Backend:
-    Developed using ASP.NET Core (C#) with MVC architecture and model-binding.
+    Developed using ASP.NET Core (C#) with MVC architecture.
 
   - API Integration:
     CoinGecko API was used to fetch current cryptocurrency prices dynamically.
